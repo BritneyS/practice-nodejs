@@ -1,4 +1,4 @@
-require('dotenv/config');
+import 'dotenv/config';
 
 const pass_example = process.env.HIDDEN_PASSWORD;
 
