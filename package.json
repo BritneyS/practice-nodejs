@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/BritneyS/practice-nodejs#readme",
   "dependencies": {
-    "dotenv": "^8.0.0"
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",

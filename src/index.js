@@ -1,7 +1,9 @@
 import 'dotenv/config';
+import express from 'express';
 
-const pass_example = process.env.HIDDEN_PASSWORD;
+const env_port = process.env.PORT;
+const app = express();
 
-console.log(pass_example);
-
-console.log('New source code update');
+app.listen(env_port, () =>
+    console.log(`Example app listening on port ${env_port}`),
+);
