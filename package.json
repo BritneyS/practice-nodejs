@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/BritneyS/practice-nodejs/issues"
   },
-  "homepage": "https://github.com/BritneyS/practice-nodejs#readme"
+  "homepage": "https://github.com/BritneyS/practice-nodejs#readme",
+  "dependencies": {
+    "dotenv": "^8.0.0"
+  }
 }
