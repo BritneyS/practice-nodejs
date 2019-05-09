@@ -11,13 +11,23 @@ const schema = gql`
         users: [User!]
         me: User
         user(id: ID!): User
+
+        messages: [Message!]!
+        message(id: ID!): Message!
     }
 
     type User {
         id: ID!
         username: String!
+        messages: [Message!]
     }
-`;
+
+    type Message {
+        id: ID!
+        text: String!
+        user: User!
+    }
+`; // adding associated 'user' to 'Message' schema establishes type relationship
 
 const resolvers = {
     Query: {
@@ -30,11 +40,28 @@ const resolvers = {
         me: (parent, args, { me }) => {
             return me;
         },
+        messages: () => {
+            return Object.values(messages);
+        },
+        message: (parent, { id }) => {
+            return messages[id];
+        },
+    },
+    User: {
+        messages: user => {
+            return Object.values(messages).filter(
+                message => message.userId === user.id,
+            );
+        },
+    },
+    Message: {
+        user: message => {
+            return users[message.userId];
+        },
     },
     // all arguments in a resolver: (parent, args, context, info) => { ... }
 }; 
-// The context argument is the third argument in the resolver 
-// function used to inject dependencies from the outside to the resolver function.
+
 const data = {
     me: {
         username: 'Britney Smith',
@@ -45,10 +72,25 @@ let users = {
     1: {
         id: '1',
         username: 'Britney Smith',
+        messageIds: [1],
     },
     2: {
         id: '2',
         username: 'Zazie Beetz',
+        messageIds: [2],
+    },
+};
+
+let messages = {
+    1: {
+        id: '1',
+        text: 'Hello World',
+        userId: '1',
+    },
+    2: {
+        id: '2',
+        text: 'Bye World',
+        userId: '2',
     },
 };
 
@@ -83,6 +125,25 @@ Query:
   users {
     username
     id
+  	messages {
+      id
+      text
+      user {
+        username
+      }
+    }
+  }
+  messages {
+    id
+    text
+  }
+  message(id: 2) {
+    id
+    text
+    user {
+      id
+      username
+    }
   }
 }
 
@@ -101,13 +162,49 @@ Result:
     "users": [
       {
         "username": "Britney Smith",
-        "id": "1"
+        "id": "1",
+        "messages": [
+          {
+            "id": "1",
+            "text": "Hello World",
+            "user": {
+              "username": "Britney Smith"
+            }
+          }
+        ]
       },
       {
         "username": "Zazie Beetz",
-        "id": "2"
+        "id": "2",
+        "messages": [
+          {
+            "id": "2",
+            "text": "Bye World",
+            "user": {
+              "username": "Zazie Beetz"
+            }
+          }
+        ]
       }
-    ]
+    ],
+    "messages": [
+      {
+        "id": "1",
+        "text": "Hello World"
+      },
+      {
+        "id": "2",
+        "text": "Bye World"
+      }
+    ],
+    "message": {
+      "id": "2",
+      "text": "Bye World",
+      "user": {
+        "id": "2",
+        "username": "Zazie Beetz"
+      }
+    }
   }
 }
 */
