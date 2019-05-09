@@ -32,9 +32,22 @@ const resolvers = {
         },
     },
     User: {
-        username: () => 'Hans', // resolving queries per field
+        username: parent => {
+            return parent.username;
+        }
+        //or:
+        // username: user => {
+            // return user.username;
+        //} // currently redundant, just an example
+        // another possibility (if 'firstname' and 'lastname' existed):
+        // username: user => `${user.firstname} ${user.lastname}`
     },
 };
+// User resolve map explanation:
+// That’s because GraphQL first resolves all users in the users resolver, 
+// and then goes through the User’s username resolver for each user. 
+// Each user is accessible as the first argument in the resolver function, 
+// so they can be used to access more properties on the entity. 
 
 const data = {
     me: {
@@ -90,21 +103,21 @@ Result:
 {
   "data": {
     "user": {
-      "username": "Hans"
+      "username": "Zazie Beetz"
     },
     "me": {
-      "username": "Hans"
+      "username": "Britney Smith"
     },
     "methough": {
-      "username": "Hans"
+      "username": "Britney Smith"
     },
     "users": [
       {
-        "username": "Hans",
+        "username": "Britney Smith",
         "id": "1"
       },
       {
-        "username": "Hans",
+        "username": "Zazie Beetz",
         "id": "2"
       }
     ]
