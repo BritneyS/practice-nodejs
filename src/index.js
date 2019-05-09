@@ -31,6 +31,9 @@ const resolvers = {
             return me;
         },
     },
+    User: {
+        username: () => 'Hans', // resolving queries per field
+    },
 };
 
 const data = {
@@ -79,6 +82,7 @@ Query:
   }
   users {
     username
+    id
   }
 }
 
@@ -86,20 +90,22 @@ Result:
 {
   "data": {
     "user": {
-      "username": "Zazie Beetz"
+      "username": "Hans"
     },
     "me": {
-      "username": "Britney Smith"
+      "username": "Hans"
     },
     "methough": {
-      "username": "Britney Smith"
+      "username": "Hans"
     },
     "users": [
       {
-        "username": "Britney Smith"
+        "username": "Hans",
+        "id": "1"
       },
       {
-        "username": "Zazie Beetz"
+        "username": "Hans",
+        "id": "2"
       }
     ]
   }
