@@ -8,6 +8,7 @@ const app = express();
 
 const schema = gql`
     type Query {
+        users: [User!]
         me: User
         user(id: ID!): User
     }
@@ -20,15 +21,14 @@ const schema = gql`
 
 const resolvers = {
     Query: {
-        me: () => {
-            return {
-                username: 'Britney Smith',
-            };
+        users: () => {
+            return Object.values(users);
         },
-        user: (parent, args) => {
-            return {
-                username: 'Zazie Beetz',
-            };
+        user: (parent, { id }) => {
+            return users[id];
+        },
+        me: () => {
+            return me;
         },
     },
 };
@@ -38,6 +38,19 @@ const data = {
         username: 'Britney Smith',
     },
 };
+
+let users = {
+    1: {
+        id: '1',
+        username: 'Britney Smith',
+    },
+    2: {
+        id: '2',
+        username: 'Zazie Beetz',
+    },
+};
+
+const me = users[1];
 
 const server = new ApolloServer({
     typeDefs: schema,
@@ -51,6 +64,47 @@ server.applyMiddleware({ app, path: '/graphql' });
 app.listen({ port: ENV_PORT }, () => {
     console.log(`Apollo Server listening on http://localhost:${ENV_PORT}/graphql`);
 });
+
+/*
+Query:
+{
+  user(id: 2) {
+    username
+  }
+  me {
+    username
+  }
+  methough: user(id: 1) {
+    username
+  }
+  users {
+    username
+  }
+}
+
+Result:
+{
+  "data": {
+    "user": {
+      "username": "Zazie Beetz"
+    },
+    "me": {
+      "username": "Britney Smith"
+    },
+    "methough": {
+      "username": "Britney Smith"
+    },
+    "users": [
+      {
+        "username": "Britney Smith"
+      },
+      {
+        "username": "Zazie Beetz"
+      }
+    ]
+  }
+}
+*/
 
 /**** Stubs for REST API
 app.get('/', (req, res) => {
