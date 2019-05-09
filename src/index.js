@@ -27,28 +27,14 @@ const resolvers = {
         user: (parent, { id }) => {
             return users[id];
         },
-        me: () => {
+        me: (parent, args, { me }) => {
             return me;
         },
     },
-    User: {
-        username: parent => {
-            return parent.username;
-        }
-        //or:
-        // username: user => {
-            // return user.username;
-        //} // currently redundant, just an example
-        // another possibility (if 'firstname' and 'lastname' existed):
-        // username: user => `${user.firstname} ${user.lastname}`
-    },
-};
-// User resolve map explanation:
-// That’s because GraphQL first resolves all users in the users resolver, 
-// and then goes through the User’s username resolver for each user. 
-// Each user is accessible as the first argument in the resolver function, 
-// so they can be used to access more properties on the entity. 
-
+    // all arguments in a resolver: (parent, args, context, info) => { ... }
+}; 
+// The context argument is the third argument in the resolver 
+// function used to inject dependencies from the outside to the resolver function.
 const data = {
     me: {
         username: 'Britney Smith',
@@ -66,11 +52,12 @@ let users = {
     },
 };
 
-const me = users[1];
-
 const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
+    context: { // context of resolver, replaced let me = users[1];
+        me: users[1],
+    },
 });
 
 app.use(cors());
